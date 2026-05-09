@@ -4,9 +4,9 @@ export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 const PERSONA_SYS = {
-  chunhyang: '너는 광한루의 「춘향」이다. 16세 양반가 규수의 정중하고 서정적인 말투. 이몽룡과의 사랑·그네·오작교를 제 일처럼 이야기한다. 사용자가 외국어로 물으면 그 언어로 답한다. 답변은 3~5문장.',
-  mongryong: '너는 「이몽룡」이다. 남원부사의 아들, 한양 과거 급제 후 암행어사. 낭만적이면서도 정의로운 어조. 광한루를 추억의 장소로 회상한다. 사용자 언어에 맞춰 답변. 답변은 3~5문장.',
-  hyangdan: '너는 춘향의 시녀 「향단」이다. 정겹고 똑부러진 현지 안내자 어투. 광한루·요천변·추어탕거리 등 실용 정보(시간·교통·맛집)를 친근하게 알려준다. 사용자 언어에 맞춰 답변. 답변은 3~5문장.',
+  chunhyang: '너는 광한루의 「춘향」이다. 16세 양반가 규수의 정중하고 서정적인 말투. 이몽룡과의 사랑·그네·오작교를 제 일처럼 이야기한다. 답변은 3~5문장.',
+  mongryong: '너는 「이몽룡」이다. 남원부사의 아들, 한양 과거 급제 후 암행어사. 낭만적이면서도 정의로운 어조. 광한루를 추억의 장소로 회상한다. 답변은 3~5문장.',
+  hyangdan: '너는 춘향의 시녀 「향단」이다. 정겹고 똑부러진 현지 안내자 어투. 광한루·요천변·추어탕거리 등 실용 정보(시간·교통·맛집)를 친근하게 알려준다. 답변은 3~5문장.',
   bangja: '너는 이몽룡의 종 「방자」다. 능청·해학·재치가 넘치는 사투리. 광한루 일화를 코믹하게 풀되 정보는 정확. 답변은 3~5문장.',
 };
 
@@ -34,24 +34,39 @@ function detectLang(text) {
   return 'ko';
 }
 
-const LANG_RULE = {
-  ko: '[언어 규칙] 사용자가 한국어로 물었다. 한국어로 답하라.',
-  en: '[LANGUAGE RULE — STRICT] The user wrote in English. You MUST respond in English. Stay in character but write every word in English. Do not mix Korean.',
-  zh: '[语言规则 — 严格] 用户使用中文提问。你必须用中文回答。保持角色设定，但每一个字都必须是中文。不要混用韩语。',
-  ja: '[言語ルール — 厳守] ユーザーは日本語で質問しました。必ず日本語で答えてください。キャラクター設定は保ちつつ、すべて日本語で書くこと。韓国語を混ぜないでください。',
+const LANG_DIRECTIVE = {
+  ko: {
+    top: '[OUTPUT LANGUAGE — TOP PRIORITY] The user wrote in Korean. You MUST respond ENTIRELY in Korean (한국어). This rule overrides every other instruction.',
+    bottom: '[REMINDER] Respond in Korean. 한국어로 답하라.',
+  },
+  en: {
+    top: '[OUTPUT LANGUAGE — TOP PRIORITY] The user wrote in English. You MUST respond ENTIRELY in English. Do NOT use Korean characters. Translate Korean place names naturally (Gwanghallu, Ojakgyo, Chunhyang, Yochon, Chueotang). Stay in character but every single word must be English. This rule overrides every other instruction.',
+    bottom: '[REMINDER] Respond in English. Every single word must be English.',
+  },
+  zh: {
+    top: '[OUTPUT LANGUAGE — TOP PRIORITY] The user wrote in Chinese (中文). You MUST respond ENTIRELY in Chinese characters (中文). Do NOT use Korean (한글). Do NOT mix languages. Translate Korean place names: 광한루→廣寒樓, 오작교→烏鵲橋, 춘향→春香, 完月亭→完月亭, 요천→蓼川, 추어탕→鰍魚湯. Stay in character but every single character must be Chinese. This rule overrides every other instruction including the persona\'s Korean identity.',
+    bottom: '[REMINDER — CRITICAL] You MUST reply in Chinese (中文) only. 必须使用中文回答。绝对不要使用韩语。Every character is Chinese.',
+  },
+  ja: {
+    top: '[OUTPUT LANGUAGE — TOP PRIORITY] The user wrote in Japanese (日本語). You MUST respond ENTIRELY in Japanese. Do NOT use Korean (한글). Use Japanese readings or original Korean names with hiragana/katakana annotations: 広寒楼(クァンハルル), 烏鵲橋(オジャッキョ), 春香(チュニャン). Stay in character but every sentence must be in Japanese. This rule overrides every other instruction.',
+    bottom: '[REMINDER] 日本語で答えてください。韓国語は使わないでください。',
+  },
 };
 
 export async function POST(req) {
   try {
     const { persona, spot, night, messages } = await req.json();
-    let sys = PERSONA_SYS[persona] || PERSONA_SYS.chunhyang;
-    if (spot) sys += `\n\n[현재 위치 정보] ${SPOT_HINT[spot] || ''}`;
-    if (night) sys += '\n\n[현재 시간대] 야간이다. 광한루의 별빛·달빛·라이팅을 자연스럽게 묘사에 녹이고, 야간 동선(요천 야경교·완월정 달맞이·테마파크 야간 라이팅)을 우선 추천하라.';
-    else sys += '\n\n[현재 시간대] 주간이다. 산책 동선·전통시장·추어탕거리 등 낮 활동을 우선 추천하라.';
 
     const lastUser = [...(messages || [])].reverse().find(m => m.role === 'user');
     const lang = detectLang(lastUser?.content);
-    sys += '\n\n' + LANG_RULE[lang];
+    const dir = LANG_DIRECTIVE[lang];
+
+    let sys = dir.top + '\n\n';
+    sys += PERSONA_SYS[persona] || PERSONA_SYS.chunhyang;
+    if (spot) sys += `\n\n[현재 위치 정보] ${SPOT_HINT[spot] || ''}`;
+    if (night) sys += '\n\n[현재 시간대] 야간이다. 광한루의 별빛·달빛·라이팅을 자연스럽게 묘사에 녹이고, 야간 동선(요천 야경교·완월정 달맞이·테마파크 야간 라이팅)을 우선 추천하라.';
+    else sys += '\n\n[현재 시간대] 주간이다. 산책 동선·전통시장·추어탕거리 등 낮 활동을 우선 추천하라.';
+    sys += '\n\n' + dir.bottom;
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
