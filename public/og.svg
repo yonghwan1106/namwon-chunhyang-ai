@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1f3a"/>
+      <stop offset="60%" stop-color="#0a0e1f"/>
+      <stop offset="100%" stop-color="#04060e"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="0.5" cy="0.5">
+      <stop offset="0%" stop-color="#fff5d4"/>
+      <stop offset="80%" stop-color="#d4a017"/>
+      <stop offset="100%" stop-color="#a87a10" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 별빛 -->
+  <g fill="#fff" opacity="0.85">
+    <circle cx="100" cy="60" r="1.5"/>
+    <circle cx="240" cy="100" r="1"/>
+    <circle cx="380" cy="40" r="1.8"/>
+    <circle cx="520" cy="80" r="1.2"/>
+    <circle cx="680" cy="50" r="1.5"/>
+    <circle cx="850" cy="120" r="1"/>
+    <circle cx="1000" cy="60" r="1.5"/>
+    <circle cx="1130" cy="160" r="1.2"/>
+    <circle cx="160" cy="180" r="1"/>
+    <circle cx="320" cy="200" r="1.4"/>
+    <circle cx="600" cy="180" r="1"/>
+    <circle cx="780" cy="220" r="1.3"/>
+    <circle cx="940" cy="200" r="1"/>
+    <circle cx="1080" cy="280" r="1.5"/>
+    <circle cx="50" cy="280" r="1.2"/>
+    <circle cx="220" cy="320" r="1"/>
+  </g>
+
+  <!-- 달 -->
+  <circle cx="980" cy="140" r="60" fill="url(#moon)"/>
+  <circle cx="980" cy="140" r="48" fill="#fff5d4" opacity="0.95"/>
+
+  <!-- 광한루 실루엣 -->
+  <g stroke="#d4a017" stroke-width="2.4" fill="none" opacity="0.9">
+    <!-- 본루 지붕 3단 -->
+    <path d="M260 380 L320 320 L880 320 L940 380"/>
+    <path d="M320 320 L380 270 L820 270 L880 320"/>
+    <path d="M380 270 L600 220 L820 270"/>
+    <!-- 처마 끝 살짝 위로 -->
+    <path d="M260 380 Q 250 372 246 366" stroke-width="2"/>
+    <path d="M940 380 Q 950 372 954 366" stroke-width="2"/>
+    <!-- 본루 기둥 -->
+    <line x1="320" y1="380" x2="320" y2="500"/>
+    <line x1="400" y1="380" x2="400" y2="500"/>
+    <line x1="480" y1="380" x2="480" y2="500"/>
+    <line x1="560" y1="380" x2="560" y2="500"/>
+    <line x1="640" y1="380" x2="640" y2="500"/>
+    <line x1="720" y1="380" x2="720" y2="500"/>
+    <line x1="800" y1="380" x2="800" y2="500"/>
+    <line x1="880" y1="380" x2="880" y2="500"/>
+    <!-- 본루 바닥 -->
+    <line x1="260" y1="380" x2="940" y2="380"/>
+    <line x1="280" y1="500" x2="920" y2="500"/>
+  </g>
+
+  <!-- 오작교 (반원 다리) -->
+  <g stroke="#c8392c" stroke-width="2" fill="none" opacity="0.8">
+    <path d="M120 530 Q200 470 280 510"/>
+    <path d="M120 530 Q200 480 280 510" stroke-dasharray="2 4"/>
+    <line x1="140" y1="525" x2="140" y2="540"/>
+    <line x1="170" y1="510" x2="170" y2="540"/>
+    <line x1="200" y1="500" x2="200" y2="540"/>
+    <line x1="230" y1="505" x2="230" y2="540"/>
+    <line x1="260" y1="515" x2="260" y2="540"/>
+    <!-- 우측에도 작게 -->
+    <path d="M920 540 Q1000 490 1080 530"/>
+  </g>
+
+  <!-- 수면 반사 -->
+  <g stroke="#1d4f7a" stroke-width="1" opacity="0.4">
+    <line x1="120" y1="555" x2="1080" y2="555"/>
+    <line x1="200" y1="565" x2="1000" y2="565"/>
+  </g>
+
+  <!-- 텍스트 -->
+  <g font-family="Noto Serif KR, serif" fill="#f5f0e0">
+    <text x="600" y="105" text-anchor="middle" font-size="22" letter-spacing="6" fill="#a8b8d4" font-weight="500">
+      NAMWON · GWANGHALLU · CHUNHYANG AI DOCENT
+    </text>
+    <text x="600" y="170" text-anchor="middle" font-size="62" font-weight="900" letter-spacing="-1">
+      광한루 「춘향이 AI 도슨트」
+    </text>
+  </g>
+
+  <g font-family="Noto Serif KR, serif" fill="#f5f0e0" opacity="0.92">
+    <text x="600" y="555" text-anchor="middle" font-size="22" letter-spacing="2">
+      QR 한 번이면 24시간 다국어 야간 음성투어
+    </text>
+    <text x="600" y="588" text-anchor="middle" font-size="16" fill="#a8b8d4" letter-spacing="3">
+      한국어 · ENGLISH · 中文 · 日本語   |   2026 남원시 시정발전 제안 · 박용환
+    </text>
+  </g>
+
+  <!-- 페르소나 4 컬러 도트 -->
+  <g>
+    <circle cx="80" cy="595" r="9" fill="#c8392c"/>
+    <circle cx="105" cy="595" r="9" fill="#1d4f7a"/>
+    <circle cx="130" cy="595" r="9" fill="#2c5e3f"/>
+    <circle cx="155" cy="595" r="9" fill="#d4a017"/>
+    <text x="180" y="600" font-family="Noto Serif KR, serif" font-size="13" fill="#a8b8d4" letter-spacing="1">
+      春香 · 李夢龍 · 香丹 · 房子
+    </text>
+  </g>
+
+  <!-- 단청 컬러 보더 -->
+  <g>
+    <rect x="0" y="0" width="1200" height="6" fill="#c8392c"/>
+    <rect x="0" y="624" width="1200" height="6" fill="#d4a017"/>
+  </g>
+</svg>
