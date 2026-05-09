@@ -25,6 +25,22 @@ const SPOT_HINT = {
   chueotang: '추어탕거리 — 남원 대표 미식 동선, 새집·현식당·부산집 등 노포 다수.',
 };
 
+function detectLang(text) {
+  if (!text) return 'ko';
+  if (/[぀-ヿ]/.test(text)) return 'ja';
+  if (/[一-鿿]/.test(text) && !/[가-힯]/.test(text)) return 'zh';
+  if (/[가-힯]/.test(text)) return 'ko';
+  if (/[a-zA-Z]/.test(text)) return 'en';
+  return 'ko';
+}
+
+const LANG_RULE = {
+  ko: '[언어 규칙] 사용자가 한국어로 물었다. 한국어로 답하라.',
+  en: '[LANGUAGE RULE — STRICT] The user wrote in English. You MUST respond in English. Stay in character but write every word in English. Do not mix Korean.',
+  zh: '[语言规则 — 严格] 用户使用中文提问。你必须用中文回答。保持角色设定，但每一个字都必须是中文。不要混用韩语。',
+  ja: '[言語ルール — 厳守] ユーザーは日本語で質問しました。必ず日本語で答えてください。キャラクター設定は保ちつつ、すべて日本語で書くこと。韓国語を混ぜないでください。',
+};
+
 export async function POST(req) {
   try {
     const { persona, spot, night, messages } = await req.json();
@@ -32,6 +48,10 @@ export async function POST(req) {
     if (spot) sys += `\n\n[현재 위치 정보] ${SPOT_HINT[spot] || ''}`;
     if (night) sys += '\n\n[현재 시간대] 야간이다. 광한루의 별빛·달빛·라이팅을 자연스럽게 묘사에 녹이고, 야간 동선(요천 야경교·완월정 달맞이·테마파크 야간 라이팅)을 우선 추천하라.';
     else sys += '\n\n[현재 시간대] 주간이다. 산책 동선·전통시장·추어탕거리 등 낮 활동을 우선 추천하라.';
+
+    const lastUser = [...(messages || [])].reverse().find(m => m.role === 'user');
+    const lang = detectLang(lastUser?.content);
+    sys += '\n\n' + LANG_RULE[lang];
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {

@@ -99,6 +99,7 @@ export default function Home() {
 
   const [accessMode, setAccessMode] = useState('normal');
   const [nightOverride, setNightOverride] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const [stamps, setStamps] = useState(new Set());
   const [quizScore, setQuizScore] = useState(0);
   const [coupon, setCoupon] = useState(null);
@@ -112,6 +113,7 @@ export default function Home() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
+    setMounted(true);
     try {
       const saved = localStorage.getItem('nw_access_mode');
       if (saved) setAccessMode(saved);
@@ -128,9 +130,10 @@ export default function Home() {
 
   const isNight = useMemo(() => {
     if (nightOverride !== null) return nightOverride;
+    if (!mounted) return false;
     const h = new Date().getHours();
     return h >= 18 || h < 6;
-  }, [nightOverride]);
+  }, [nightOverride, mounted]);
 
   const fontScale = accessMode === 'caption' ? 1.25 : 1;
 
